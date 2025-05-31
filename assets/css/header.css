@@ -1,0 +1,57 @@
+.main-header {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.main-header .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.main-header .navbar a {
+    color: white;
+    text-decoration: none;
+}
+.btn-login, .btn-register, .btn-logout {
+    background-color: #66D9FF;
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: #1C1C1E;
+    font-weight: bold;
+}
+.Games {
+  padding: 12px 30px;
+  background: #007BFF;
+  color: white;
+  font-weight: bold;
+  border-radius: 30px;
+  text-decoration: none;
+  box-shadow: 0 0 12px #66D9FF, 0 0 24px #007BFF;
+  transition: all 0.3s ease;
+  animation: floatGlow 3s ease-in-out infinite;
+}
+
+.Games:hover {
+  background: #0056b3;
+  box-shadow: 0 0 20px #66D9FF, 0 0 40px #007BFF;
+}
+
+@keyframes floatGlow {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 0 12px red, 0 0 24px #007BFF;
+  }
+  50% {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px yellow, 0 0 35px #007BFF;
+  }
+}
+
+
+.greeting {
+    font-style: italic;
+}

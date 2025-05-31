@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
+  background: #f4f6f8;
+  color: #1C1C1E;
+  overflow-x: hidden;
+}
+
+.login-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin-left: 159px;
+}
+
+.image-side {
+  flex: 1;
+  background: url('https://cdn.pixabay.com/photo/2024/07/13/07/40/cars-8891625_1280.jpg') center center/cover no-repeat;
+  position: relative;
+  clip-path: polygon(0 0, 60% 0, 40% 100%, 0% 100%);
+  animation: zoomIn 10s ease-in-out infinite alternate;
+  transition: clip-path 0.3s ease;
+}
+
+.image-side::after {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 123, 255, 0.5); /* blue overlay */
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+
+.form-side {
+  flex: 1;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%);
+  padding: 40px;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 10;
+  transition: clip-path 0.3s ease;
+}
+
+
+.form-container {
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  z-index: 888px;
+}
+
+.title {
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+  color: #007BFF;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 888px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 2px solid #007BFF;
+  border-radius: 50px;
+  padding: 14px 20px;
+  background: #f4f6f8;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 999px;
+}
+
+.input-group input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #1C1C1E;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  z-index: 999;
+}
+
+.input-group input::placeholder {
+  color: #6C757D;
+  font-weight: 500;
+  z-index: 999;
+}
+
+.input-group:focus-within {
+  border-color: #2ECC71;
+  box-shadow: 0 0 10px #2ECC71aa;
+  z-index: 999;
+}
+
+.icon {
+  color: #007BFF;
+  font-size: 18px;
+  margin-left: 14px;
+  pointer-events: none;
+  transition: color 0.3s ease;
+  z-index: 999;
+}
+
+.input-group:focus-within .icon {
+  color: #2ECC71;
+}
+
+
+.btn-login {
+  background: #2ECC71;
+  border: none;
+  padding: 16px 0;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 12px rgba(46,204,113,0.4);
+  letter-spacing: 1.5px;
+  z-index: 999;
+}
+
+.btn-login:hover {
+  background: #27ae60;
+  box-shadow: 0 10px 20px rgba(39,174,96,0.6);
+  transform: scale(1.05);
+  z-index: 999;
+}
+
+
+.login-links {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  gap: 15px;
+  z-index: 999px;
+}
+
+.link {
+  color: #007BFF;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  border: 2px solid #007BFF;
+  color: #007BFF;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+.btn-secondary:hover {
+  background-color: #007BFF;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0,123,255,0.4);
+}
+
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  100% {
+    transform: scale(1.05);
+    filter: brightness(0.9);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+  }
+  .image-side, .form-side {
+    flex: none;
+    width: 100%;
+    clip-path: none;
+    height: 40vh;
+  }
+  .form-side {
+    height: auto;
+    padding: 30px 20px;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+  }
+  .form-container {
+    max-width: 100%;
+  }
+  .login-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+/* Laptop size fix for clip-path to avoid form going behind */
+@media (min-width: 901px) and (max-width: 1440px) {
+  .image-side {
+    clip-path: polygon(0 0, 55% 0, 45% 100%, 0% 100%);
+  }
+  .form-side {
+    clip-path: polygon(55% 0, 100% 0, 100% 100%, 45% 100%);
+  }
+}

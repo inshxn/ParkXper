@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dotted Snake Game</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, turquoise, #40e0d0, #20b2aa, #008080, #20b2aa, #40e0d0, turquoise);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+      font-family: Arial, sans-serif;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background-color: rgba(255, 255, 255, 0.3);
+      border: 10px solid black;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    #highScoreBoard, #scoreBoard {
+      position: absolute;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #highScoreBoard { top: 20px; }
+    #scoreBoard { top: 70px; }
+
+    #dashboardBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Game Over Overlay Styles */
+    #game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    
+    #game-over-text {
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    
+    #final-score, #best-score {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    #playAgainBtn {
+      padding: 10px 20px;
+      font-size: 20px;
+      background-color: #f8d347;
+      color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    
+    #playAgainBtn:hover {
+      background-color: #ffdf60;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="highScoreBoard">High Score: 0</div>
+  <div id="scoreBoard">Dots Eaten: 0</div>
+  <button id="dashboardBtn" class="btn btn-warning">Go to Dashboard</button>
+  <canvas id="game" width="400" height="400"></canvas>
+
+  <!-- Game Over Overlay -->
+  <div id="game-over">
+    <div id="game-over-text">GAME OVER</div>
+    <div id="final-score">Your Score: <span id="final-scr">0</span></div>
+    <div id="best-score">Best Score: <span id="best-scr">0</span></div>
+    <button id="playAgainBtn">PLAY AGAIN</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const scoreBoard = document.getElementById("scoreBoard");
+    const highScoreBoard = document.getElementById("highScoreBoard");
+    const dashboardBtn = document.getElementById("dashboardBtn");
+    
+    const box = 20;
+    let score = 0;
+    let highScore = localStorage.getItem('snakeHighScore') || 0;
+    let game;
+    let direction = "RIGHT";
+    let snake = [];
+    let food = {};
+    let gameRunning = true;
+
+    function initGame() {
+      gameRunning = true;
+      score = 0;
+      direction = "RIGHT";
+      snake = [
+        {x: 5 * box, y: 10 * box},
+        {x: 4 * box, y: 10 * box},
+        {x: 3 * box, y: 10 * box},
+        {x: 2 * box, y: 10 * box}
+      ];
+      food = {
+        x: Math.floor(Math.random() * 20) * box,
+        y: Math.floor(Math.random() * 20) * box
+      };
+      updateScore();
+      
+      // Hide game over overlay
+      document.getElementById("game-over").style.display = "none";
+      
+      if (game) clearInterval(game);
+      game = setInterval(draw, 200);
+    }
+
+    function updateScore() {
+      scoreBoard.textContent = `Dots Eaten: ${score}`;
+      if (score > highScore) {
+        highScore = score;
+        highScoreBoard.textContent = `High Score: ${highScore}`;
+        localStorage.setItem('snakeHighScore', highScore);
+      }
+    }
+
+    function draw() {
+      if (!gameRunning) return;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw snake
+      for (let i = 0; i < snake.length; i++) {
+        ctx.fillStyle = (i === 0) ? "red" : "#00f";
+        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+        ctx.strokeStyle = "#fff";
+        ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+      }
+
+      // Draw food
+      ctx.fillStyle = "green";
+      ctx.fillRect(food.x, food.y, box, box);
+
+      let headX = snake[0].x;
+      let headY = snake[0].y;
+
+      if (direction === "LEFT") headX -= box;
+      if (direction === "RIGHT") headX += box;
+      if (direction === "UP") headY -= box;
+      if (direction === "DOWN") headY += box;
+
+      const willEat = headX === food.x && headY === food.y;
+      const newHead = {x: headX, y: headY};
+      const body = willEat ? snake : snake.slice(0, -1);
+
+      // Check for collisions
+      if (
+        headX < 0 || headY < 0 ||
+        headX >= canvas.width || headY >= canvas.height ||
+        collision(headX, headY, body)
+      ) {
+        endGame();
+        return;
+      }
+
+      // Handle eating food
+      if (willEat) {
+        score++;
+        updateScore();
+        food = {
+          x: Math.floor(Math.random() * 20) * box,
+          y: Math.floor(Math.random() * 20) * box
+        };
+      } else {
+        snake.pop();
+      }
+
+      snake.unshift(newHead);
+    }
+
+    function collision(x, y, array) {
+      return array.some(segment => segment.x === x && segment.y === y);
+    }
+
+    function endGame() {
+      gameRunning = false;
+      clearInterval(game);
+      
+      // Update game over overlay
+      document.getElementById("final-scr").textContent = score;
+      document.getElementById("best-scr").textContent = highScore;
+      document.getElementById("game-over").style.display = "flex";
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (!gameRunning) return;
+      
+      if (event.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+      else if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+      else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+      else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+    });
+
+    dashboardBtn.addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      initGame();
+    });
+
+    // Initialize game
+    highScoreBoard.textContent = `High Score: ${highScore}`;
+    initGame();
+  </script>
+</body>
+</html>

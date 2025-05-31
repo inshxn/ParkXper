@@ -1,0 +1,257 @@
+/* Preloader */
+#preloader {
+  background: white;
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloader-content h2 {
+  animation: bounceIn 1.5s ease-in-out infinite;
+  font-weight: bold;
+  color: #007BFF;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('../img/parking-bg.jpg') center/cover no-repeat;
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+  position: relative;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+}
+
+.hero-section p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+/* Call to action button */
+.cta-btn {
+  margin-top: 30px;
+  padding: 12px 30px;
+  background: #007BFF;
+  color: white;
+  font-weight: bold;
+  border-radius: 30px;
+  text-decoration: none;
+  box-shadow: 0 0 10px #66D9FF;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.cta-btn:hover {
+  background: #0056b3;
+  box-shadow: 0 0 15px #66D9FF;
+}
+
+/* Locations List */
+.locations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 40px 20px;
+}
+
+/* Location Card */
+.location-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+}
+
+.location-icon {
+font-size: 48px;
+color: #007BFF;
+margin-bottom: 15px;
+}
+
+.location-info h3 {
+margin: 0;
+font-size: 1.5rem;
+color: #1C1C1E;
+}
+
+.location-info p {
+margin: 5px 0;
+color: #6C757D;
+font-size: 0.9rem;
+}
+
+/* Book button */
+.btn-book {
+display: inline-block;
+background: #2ECC71;
+color: white;
+font-weight: 600;
+padding: 10px 18px;
+border-radius: 30px;
+text-decoration: none;
+position: absolute;
+bottom: 20px;
+right: 20px;
+transition: background 0.3s ease;
+}
+
+.btn-book:hover {
+background: #27ae60;
+}
+
+/* User Bookings */
+.user-bookings-section {
+margin: 60px 20px;
+}
+
+.bookings-list {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.booking-card {
+background: white;
+border-radius: 12px;
+padding: 15px 20px;
+box-shadow: 0 8px 16px rgba(0,0,0,0.07);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.booking-info h3 {
+margin: 0 0 5px 0;
+font-size: 1.2rem;
+color: #007BFF;
+}
+
+.booking-info p {
+margin: 2px 0;
+color: #6C757D;
+font-size: 0.85rem;
+}
+
+.btn-end {
+background: #FF6B6B;
+color: white;
+padding: 8px 16px;
+border-radius: 25px;
+font-weight: 600;
+text-decoration: none;
+transition: background 0.3s ease;
+}
+
+.btn-end:hover {
+background: #e74c3c;
+}
+
+/* Feedback Section */
+.feedback-section {
+background: #F4F6F8;
+padding: 50px 20px;
+text-align: center;
+}
+
+.feedback-form {
+max-width: 500px;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+padding: 12px 15px;
+border-radius: 12px;
+border: 1px solid #ccc;
+font-size: 1rem;
+resize: vertical;
+}
+
+.btn-feedback {
+background: #007BFF;
+color: white;
+font-weight: 600;
+padding: 12px 20px;
+border: none;
+border-radius: 30px;
+cursor: pointer;
+transition: background 0.3s ease;
+}
+
+.btn-feedback:hover {
+background: #0056b3;
+}
+
+/* Districts Grid */
+.districts-section {
+padding: 40px 20px;
+}
+
+.districts-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+gap: 20px;
+max-width: 900px;
+margin: 20px auto 0 auto;
+}
+
+.district-card {
+background: white;
+border-radius: 16px;
+box-shadow: 0 6px 12px rgba(0,0,0,0.07);
+padding: 20px;
+text-align: center;
+transition: box-shadow 0.3s ease;
+cursor: pointer;
+}
+
+.district-card:hover {
+box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.district-card i {
+font-size: 36px;
+color: #007BFF;
+margin-bottom: 8px;
+}
+
+.district-card h3 {
+margin: 0;
+color: #1C1C1E;
+font-weight: 600;
+font-size: 1.1rem;
+}
+
+/* No Locations / Bookings */
+.no-locations,
+.no-bookings {
+text-align: center;
+font-size: 1.1rem;
+color: #6C757D;
+margin: 40px 0;
+}
+
+/* Animations from animate.css and minor overrides */
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.1); }
+}

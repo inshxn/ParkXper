@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+   display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+  background: linear-gradient(45deg, #ff0000, #00ff00, pink, #ff0000);
+  background-size: 400% 400%;
+  animation: rgbAnimation 12s ease infinite;
+}
+
+@keyframes rgbAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+    .container {
+     background: linear-gradient(to right, red, yellow);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 350px;
+      max-width: 90%;
+    }
+    h1 {
+      color: #003366;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .mode-btn, #restart, #back-to-menu, #go-to-dashboard, #start-game {
+      padding: 12px 25px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    .mode-btn {
+      background: linear-gradient(to right, red, #00c6ff);
+      color: white;
+    }
+    .mode-btn:hover {
+      background: linear-gradient(to right, red, #0094cc);
+      transform: scale(1.05);
+    }
+    #restart {
+      background: linear-gradient(to right, #28a745, #85d634);
+      color: white;
+    }
+    #restart:hover {
+      background: linear-gradient(to right, #1e7e34, #6fc52d);
+      transform: scale(1.05);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #fefefe;
+      border: 2px solid #ddd;
+      border-radius: 15px;
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      line-height: 100px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .cell:hover:not(.taken) {
+      background-color: #e6f7ff;
+      transform: scale(1.05);
+    }
+    .cell.taken {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    #status {
+      font-size: 18px;
+      margin: 20px 0;
+      color: #003366;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+    #back-to-menu {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+    }
+    #back-to-menu:hover {
+      background: linear-gradient(to right, #cc2b5e, #ff6a00);
+      transform: scale(1.05);
+    }
+    #go-to-dashboard {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+    }
+    #go-to-dashboard:hover {
+      background: linear-gradient(to right, #4e54c8, #5c258d);
+      transform: scale(1.05);
+    }
+    input[type="text"] {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic Tac Toe</h1>
+
+    <!-- Mode Selection -->
+    <div id="mode-selection">
+      <button id="play-player" class="mode-btn">Play Against Player</button>
+      <button id="play-bot" class="mode-btn">Play Against Bot</button>
+    </div>
+
+    <!-- Player Name Input -->
+    <div id="name-input" class="hidden">
+      <input type="text" id="playerXName" placeholder="Enter Player X Name" />
+      <input type="text" id="playerOName" placeholder="Enter Player O Name" />
+      <p id="name-warning" style="color:red; font-weight:bold;" class="hidden">Please enter both player names!</p>
+      <button id="start-game">Start Game</button>
+    </div>
+
+    <!-- Game Board -->
+    <div id="game-board" class="hidden">
+      <div class="grid">
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+      </div>
+      <p id="status"></p>
+      <button id="restart" class="hidden">Restart</button>
+      <button id="back-to-menu" class="hidden">Back</button>
+    </div>
+
+    <!-- Dashboard button always visible -->
+       <a href="http://localhost/ParkXpert/user/"><button id="go-to-dashboard">Go to Home</button>
+  </a>
+      </div>
+
+  <script>
+    const modeSelection = document.getElementById("mode-selection");
+    const nameInput = document.getElementById("name-input");
+    const gameBoard = document.getElementById("game-board");
+    const cells = document.querySelectorAll("[data-cell]");
+    const statusText = document.getElementById("status");
+    const restartBtn = document.getElementById("restart");
+    const playerBtn = document.getElementById("play-player");
+    const botBtn = document.getElementById("play-bot");
+    const backBtn = document.getElementById("back-to-menu");
+    const dashboardBtn = document.getElementById("go-to-dashboard");
+    const startGameBtn = document.getElementById("start-game");
+    const nameWarning = document.getElementById("name-warning");
+
+    const playerXInput = document.getElementById("playerXName");
+    const playerOInput = document.getElementById("playerOName");
+
+    let isBot = false;
+    let currentPlayer = "X";
+    let board = Array(9).fill(null);
+    let playerXName = "Player X";
+    let playerOName = "Player O";
+
+    const winCombinations = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    playerBtn.addEventListener("click", () => {
+      modeSelection.classList.add("hidden");
+      nameInput.classList.remove("hidden");
+    });
+
+    startGameBtn.addEventListener("click", () => {
+      const xName = playerXInput.value.trim();
+      const oName = playerOInput.value.trim();
+
+      if (!xName || !oName) {
+        nameWarning.classList.remove("hidden");
+        return;
+      }
+
+      nameWarning.classList.add("hidden");
+      playerXName = xName;
+      playerOName = oName;
+      nameInput.classList.add("hidden");
+      gameBoard.classList.remove("hidden");
+      updateStatus();
+    });
+
+    botBtn.addEventListener("click", () => {
+      isBot = true;
+      modeSelection.classList.add("hidden");
+      gameBoard.classList.remove("hidden");
+      updateStatus();
+    });
+
+    restartBtn.addEventListener("click", restartGame);
+
+    backBtn.addEventListener("click", () => {
+      gameBoard.classList.add("hidden");
+      modeSelection.classList.remove("hidden");
+      nameInput.classList.add("hidden");
+      restartGame();
+    });
+
+    dashboardBtn.addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+
+    function handleCellClick(cell, index) {
+      if (board[index] || checkWin()) return;
+      board[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.classList.add("taken");
+      if (checkWin()) {
+        statusText.textContent = isBot
+          ? currentPlayer === "X" ? "You Win!" : "Bot Wins!"
+          : `${currentPlayer === "X" ? playerXName : playerOName} Wins!`;
+        endGame();
+        return;
+      }
+      if (board.every(cell => cell)) {
+        statusText.textContent = "It's a Draw!";
+        endGame();
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      updateStatus();
+      if (isBot && currentPlayer === "O") botMove();
+    }
+
+    function botMove() {
+      let bestScore = -Infinity;
+      let move;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = "O";
+          let score = minimax(board, 0, false);
+          board[i] = null;
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      setTimeout(() => {
+        handleCellClick(cells[move], move);
+      }, 500);
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      const winner = checkWinner();
+      if (winner === "O") return 10 - depth;
+      if (winner === "X") return depth - 10;
+      if (board.every(cell => cell)) return 0;
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < board.length; i++) {
+          if (board[i] === null) {
+            board[i] = "O";
+            let score = minimax(board, depth + 1, false);
+            board[i] = null;
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < board.length; i++) {
+          if (board[i] === null) {
+            board[i] = "X";
+            let score = minimax(board, depth + 1, true);
+            board[i] = null;
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    function checkWin() {
+      return winCombinations.some(combination =>
+        combination.every(index => board[index] === currentPlayer)
+      );
+    }
+
+    function checkWinner() {
+      for (let combination of winCombinations) {
+        const [a, b, c] = combination;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return null;
+    }
+
+    function endGame() {
+      cells.forEach(cell => cell.classList.add("taken"));
+      restartBtn.classList.remove("hidden");
+      backBtn.classList.remove("hidden");
+    }
+
+    function restartGame() {
+      board.fill(null);
+      currentPlayer = "X";
+      cells.forEach(cell => {
+        cell.textContent = "";
+        cell.classList.remove("taken");
+      });
+      restartBtn.classList.add("hidden");
+      backBtn.classList.add("hidden");
+      updateStatus();
+    }
+
+    function updateStatus() {
+      if (isBot) {
+        statusText.textContent = currentPlayer === "X" ? "Your Turn" : "Bot's Turn";
+      } else {
+        statusText.textContent =
+          currentPlayer === "X" ? `${playerXName}'s Turn` : `${playerOName}'s Turn`;
+      }
+    }
+
+    cells.forEach((cell, index) => {
+      cell.addEventListener("click", () => handleCellClick(cell, index));
+    });
+  </script>
+</body>
+</html>

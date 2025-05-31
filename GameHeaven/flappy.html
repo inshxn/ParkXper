@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLAPPY BIRD GAME</title>
+    <style>
+        #game {
+            height: 570px;
+            width: 900px;
+            background-image: url('background.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: bottom;
+            border: 4px solid black;
+            margin-left: 13%;
+            margin-top: 2%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body {
+            background: linear-gradient(to right, #2b1a5e, #5f4d9a, #2a2047);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #pipe1 {
+            position: absolute;
+            width: 50px;
+            height: 50%;
+            background-image: url('flappybirdpipe.png');
+            transform: rotate(180deg);
+        }
+
+        #pipe2 {
+            position: absolute;
+            width: 50px;
+            height: 30%;
+            top: 80%;
+            background-image: url('flappybirdpipe.png');
+        }
+
+        .obs {
+            left: 95%;
+            animation: move 4s ease-in-out infinite;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        @keyframes move {
+            0% { left: 100%; }
+            100% { left: -6%; }
+        }
+
+        #bird {
+            position: absolute;
+            top: 200px;
+            left: 90px;
+        }
+
+        #bird img {
+            height: 60px;
+            width: 80px;
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #high-score {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #game-over-text {
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        #final-score, #best-score {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #play-again {
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #f8d347;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #play-again:hover {
+            background-color: #ffdf60;
+        }
+    </style>
+</head>
+<body onclick="jump()">
+    <div id="game">
+        <div id="pipe1" class="obs"></div>
+        <div id="pipe2" class="obs"></div>
+        <div id="bird"><img src="flappyhead.png"></div>
+        <div id="score">SCORE: <span id="scr">0</span></div>
+        <div id="high-score">HIGH SCORE: <span id="high-scr">0</span></div>
+        
+        <div id="game-over">
+            <div id="game-over-text">GAME OVER</div>
+            <div id="final-score">Your Score: <span id="final-scr">0</span></div>
+            <div id="best-score">Best Score: <span id="best-scr">0</span></div>
+            <button id="play-again">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        var pipe1_hg, hole1_hg, pipe2_hg;
+        var score = 0;
+        var highScore = localStorage.getItem('flappyBirdHighScore') || 0;
+        var gameRunning = true;
+        var elem = document.getElementById("bird");
+        var scored = false; // Track if current pair of pipes has been scored
+        
+        // Initialize game
+        function initGame() {
+            // Reset score
+            score = 0;
+            document.getElementById("scr").innerHTML = score;
+            
+            // Display high score
+            document.getElementById("high-scr").innerHTML = highScore;
+            
+            // Reset bird position
+            elem.style.top = "200px";
+            
+            // Hide game over screen
+            document.getElementById("game-over").style.display = "none";
+            
+            // Start game
+            gameRunning = true;
+            scored = false;
+        }
+        
+        // Start the game
+        initGame();
+        
+        // Pipe generation
+        setInterval(() => {
+            if (!gameRunning) return;
+            
+            pipe1_hg = Math.floor(Math.random() * 10) + 30;
+            hole1_hg = Math.floor(Math.random() * 20) + 20;
+            document.getElementById("pipe1").style.height = pipe1_hg + "%";
+            document.getElementById("pipe2").style.top = (pipe1_hg + hole1_hg) + "%";
+            document.getElementById("pipe2").style.height = (100 - (pipe1_hg + hole1_hg)) + "%";
+            scored = false; // Reset scored flag when new pipes are generated
+        }, 4000);
+
+        // Gravity functionality
+        setInterval(() => {
+            if (!gameRunning) return;
+            
+            var x = parseInt(window.getComputedStyle(elem).getPropertyValue("top"));
+            if (x <= 510) {
+                elem.style.top = (x + 3) + "px";
+            } else {
+                endGame();
+            }
+        }, 30);
+
+        // Fly functionality
+        function jump() {
+            if (!gameRunning) return;
+            
+            var fly = parseInt(window.getComputedStyle(elem).getPropertyValue("top"));
+            if (fly >= 14) {
+                elem.style.top = (fly - 40) + "px";
+            }
+        }
+
+        document.addEventListener('keyup', event => {
+            if (event.code === 'Space') {
+                jump();
+            }
+        });
+
+        // Score functionality - check if bird passed between pipes
+        setInterval(() => {
+            if (!gameRunning) return;
+            
+            var birdLeft = parseInt(window.getComputedStyle(elem).getPropertyValue("left"));
+            var pipeLeft = parseInt(window.getComputedStyle(document.getElementById("pipe1")).getPropertyValue("left"));
+            
+            // Check if bird is between the pipes (50px is pipe width)
+            if (birdLeft > pipeLeft + 50 && !scored) {
+                score++;
+                document.getElementById("scr").innerHTML = score;
+                scored = true; // Mark this pair as scored
+                
+                // Update high score display if current score exceeds it
+                if (score > highScore) {
+                    highScore = score;
+                    document.getElementById("high-scr").innerHTML = highScore;
+                }
+            }
+        }, 10);
+
+        // Obstacle functionality
+        function checkcollision(elm1, elm2) {
+            var elm1Rect = elm1.getBoundingClientRect();
+            var elm2Rect = elm2.getBoundingClientRect();
+
+            return (elm1Rect.right >= elm2Rect.left && 
+                   elm1Rect.left <= elm2Rect.right) && 
+                   (elm1Rect.bottom >= elm2Rect.top && 
+                    elm1Rect.top <= elm2Rect.bottom);
+        }
+
+        setInterval(() => {
+            if (!gameRunning) return;
+            
+            if (checkcollision(document.getElementById("bird"), document.getElementById("pipe1")) || 
+                checkcollision(document.getElementById("bird"), document.getElementById("pipe2"))) {
+                elem.style.top = "513px";
+                setTimeout(() => {
+                    endGame();
+                }, 10);
+            }
+        }, 100);
+
+        // Game over function
+        function endGame() {
+            gameRunning = false;
+            
+            // Update high score in localStorage if current score is higher
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('flappyBirdHighScore', highScore);
+            }
+            
+            // Show game over screen
+            document.getElementById("final-scr").innerHTML = score;
+            document.getElementById("best-scr").innerHTML = highScore;
+            document.getElementById("game-over").style.display = "flex";
+        }
+
+        // Play again button
+        document.getElementById("play-again").addEventListener("click", function() {
+            initGame();
+        });
+    </script>
+</body>
+</html>
